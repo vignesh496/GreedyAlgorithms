@@ -1,50 +1,97 @@
+import java.io.*;
 import java.util.*;
 
-class Item {
-    int weight;
-    int value;
+class Main {
+    public static void main(String[] args) {
+        ArrayList<Items> items = new ArrayList<>();
+        items.add(new Items(7, 14));
+        items.add(new Items(5, 10));
+        items.add(new Items(10, 12));
+        items.add(new Items(8, 16));
+        items.add(new Items(9, 18));
 
-    public Item(int weight, int value) {
-        this.weight = weight;
-        this.value = value;
+        Knapsack k = new Knapsack(items, 10);
+        k.sortByRatio();
+        k.sortByCost();
+        k.sortByWeight();
     }
 }
 
-public class FractionalKnapsack {
-    public static double getMaxValue(int[] weights, int[] values, int capacity) {
-        List<Item> itemList = new ArrayList<>();
+class Items {
+    int weight, cost;
+    double ratio;
+    Items (int weight, int cost)    {
+        this.weight = weight;
+        this.cost = cost;
+        this.ratio = (double) cost/weight;
+    }
+}
 
-        // Create Items
-        for (int i = 0; i < weights.length; i++) {
-            itemList.add(new Item(weights[i], values[i]));
-        }
-
-        // Sort Items based on value per weight ratio (greedy choice)
-        itemList.sort((Item a, Item b) -> Double.compare((double) b.value / b.weight, (double) a.value / a.weight));
-
-        double maxValue = 0;
-
-        // Fill the knapsack greedily
-        for (Item item : itemList) {
-            if (capacity >= item.weight) {
-                maxValue += item.value;
-                capacity -= item.weight;
-            } else {
-                double fraction = (double) capacity / item.weight;
-                maxValue += fraction * item.value;
+class Knapsack {
+    ArrayList<Items> items;
+    int capacity;
+    Knapsack(ArrayList<Items> items, int capacity)  {
+        this.items = items;
+        this.capacity = capacity;
+    }
+    public void sortByRatio()   {
+        Collections.sort(items, Comparator.comparingDouble((Items i) -> i.ratio).reversed());
+        System.out.println("Items in Knapsack (value/weight) approach");
+        System.out.println("weight\tCost");
+        int x = capacity;
+        double tot = 0.0;
+        for (Items i : items)   {
+            if (i.weight <= x)    {
+                System.out.println(i.weight + "\t" + i.cost);
+                x -= i.weight; 
+                tot += (double) i.cost;
+            }
+            else if (i.weight > x)  {
+                System.out.println(x+"/"+i.weight + "\t" + (double) (i.cost * x)/i.weight);
+                tot += (double) (i.cost*x)/i.weight;
                 break;
             }
         }
-
-        return maxValue;
+        System.out.println("Optimal cost : " + tot);
     }
-
-    public static void main(String[] args) {
-        int[] weights = {10, 20, 30, 50};
-        int[] values = {60, 100, 120, 250};
-        int capacity = 50;
-
-        double maxValue = getMaxValue(weights, values, capacity);
-        System.out.println("Maximum value in Knapsack: " + maxValue);
+    public void sortByCost()   {
+        Collections.sort(items, Comparator.comparingDouble((Items i) -> i.cost).reversed());
+        System.out.println("Items in Knapsack (value) approach");
+        System.out.println("weight\tCost");
+        int x = capacity;
+        double tot = 0.0;
+        for (Items i : items)   {
+            if (i.weight <= x)    {
+                System.out.println(i.weight + "\t" + i.cost);
+                x -= i.weight; 
+                tot += (double) i.cost;
+            }
+            else if (i.weight > x)  {
+                System.out.println(x+"/"+i.weight + "\t" + (double) (i.cost * x)/i.weight);
+                tot += (double) (i.cost*x)/i.weight;
+                break;
+            }
+        }
+        System.out.println("Optimal cost : " + tot);
+    }
+    public void sortByWeight()   {
+        Collections.sort(items, Comparator.comparingDouble((Items i) -> i.weight).reversed());
+        System.out.println("Items in Knapsack (weight) approach");
+        System.out.println("weight\tCost");
+        int x = capacity;
+        double tot = 0.0;
+        for (Items i : items)   {
+            if (i.weight <= x)    {
+                System.out.println(i.weight + "\t" + i.cost);
+                x -= i.weight; 
+                tot += (double) i.cost;
+            }
+            else if (i.weight > x)  {
+                System.out.println(x+"/"+i.weight + "\t" + (double) (i.cost * x)/i.weight);
+                tot += (double) (i.cost*x)/i.weight;
+                break;
+            }
+        }
+        System.out.println("Optimal cost : " + tot);
     }
 }
